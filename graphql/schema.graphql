@@ -1,0 +1,97 @@
+"A datetime string with format `Y-m-d H:i:s`, e.g. `2018-05-23 13:43:32`."
+scalar Date @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Date")
+
+# type Query {
+#     user(
+#         id: ID @eq @rules(apply: ["prohibits:email", "required_without:email"])
+#         email: String
+#             @eq
+#             @rules(apply: ["prohibits:id", "required_without:id", "email"])
+#     ): User @find
+
+#     users(name: String @where(operator: "like")): [User!]!
+#         @paginate(defaultCount: 10)
+# }
+
+type Post {
+    id: ID!
+    source: String!
+    channel_name: String!
+    channel_img: String
+    name: String
+    create_date: Date!
+    attachments: [Attachment] @hasMany
+    tags: [Tag] @belongsToMany
+}
+
+type Attachment {
+    id: ID!
+    type: String!
+    data: String!
+    post: Post! @belongsTo
+}
+
+type Tag {
+    id: ID!
+    name: String
+    color: String!
+    img: String
+    posts: [Post] @belongsToMany
+}
+
+#
+# Querys
+#
+
+type Query {
+    posts: [Post] @paginate
+    post(id: Int! @eq): Post @find
+
+    attachments: [Attachment] @all
+    attachment(id: Int! @eq): Attachment @find
+
+    tags: [Tag] @all
+    tag(id: Int! @eq): Tag @find
+}
+
+#
+# Mutations
+#
+
+input CreatePostInput {
+    source: String!
+    channel_name: String!
+    channel_img: String
+    name: String
+    create_date: Date!
+    # tags: CreateTagsLink
+}
+
+input CreateAttachmentInput {
+    type: String!
+    data: String!
+    post: CreatePostBelongsTo
+}
+
+input CreatePostBelongsTo {
+    connect: ID
+    create: CreatePostInput
+}
+
+input CreateTagInput {
+    img: String
+    name: String! @rules(apply: ["unique:tags"])
+    color: String!
+}
+
+input CreateTagsLink {
+    create: [CreateTagInput!]
+    connect: [ID!]
+}
+
+type Mutation {
+    # createAttachment(input: CreateAttachmentInput! @spread): Attachment! @create
+    createPost(input: CreatePostInput! @spread): Post! @create
+    createTag(input: CreateTagInput! @spread): Tag! @create
+    attachTag(post_id: ID!, tag_id: ID!): Post
+}
