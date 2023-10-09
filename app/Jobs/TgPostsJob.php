@@ -27,5 +27,16 @@ class TgPostsJob implements ShouldQueue
     public function handle(): void
     {
         //
+
+        // $user_id = 210700286;
+        // $request_params = array(
+        // 'user_id' => $user_id,
+        // 'fields' => 'bdate',
+        // 'v' => '5.52',
+        // 'access_token' => '533bacf01e11f55b536a565b57531ac114461ae8736d6506a3'
+        // );
+        // $get_params = http_build_query($request_params);
+        // $result = json_decode(file_get_contents('https://api.vk.com/method/users.get?'. $get_params));
+        // echo($result -> response[0] -> bdate);
     }
 }

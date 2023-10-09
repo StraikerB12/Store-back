@@ -1,5 +1,7 @@
 /.phpunit.cache
 /node_modules
+/public/bot.madeline
+/public/MadelineProto.log
 /public/build
 /public/hot
 /public/storage

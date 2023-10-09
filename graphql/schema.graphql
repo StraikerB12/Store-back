@@ -39,6 +39,30 @@ type Tag {
     posts: [Post] @belongsToMany
 }
 
+type MediaKey {
+    id: ID!
+    type: String
+    data: String!
+}
+
+type ResponseKeysMutations {
+    type: String!
+    data: String
+    error: String
+}
+
+#
+# VK
+#
+
+type ResponseVK {
+    access_token: String
+    expires_in: Int
+    user_id: Int
+    error: String
+    error_description: String
+}
+
 #
 # Querys
 #
@@ -52,6 +76,8 @@ type Query {
 
     tags: [Tag] @all
     tag(id: Int! @eq): Tag @find
+
+    getKeys: [MediaKey] @all
 }
 
 #
@@ -89,9 +115,35 @@ input CreateTagsLink {
     connect: [ID!]
 }
 
+input keyInput {
+    type: String!
+    data: String!
+}
+
 type Mutation {
     # createAttachment(input: CreateAttachmentInput! @spread): Attachment! @create
+
     createPost(input: CreatePostInput! @spread): Post! @create
+
     createTag(input: CreateTagInput! @spread): Tag! @create
     attachTag(post_id: ID!, tag_id: ID!): Post
+
+    addKey(input: keyInput!): ResponseKeysMutations!
+    nextStepKey(input: keyInput!): ResponseKeysMutations!
+
+    authVK(code: String!, redirect_uri: String!): ResponseVK!
+}
+
+
+
+#
+# Subscription
+#
+
+type Message {
+    doneJobs: Int!
+}
+
+type Subscription {
+    jobInterface(id: ID): Message
 }
